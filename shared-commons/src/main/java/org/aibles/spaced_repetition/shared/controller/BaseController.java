@@ -1,6 +1,5 @@
 package org.aibles.spaced_repetition.shared.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.aibles.spaced_repetition.shared.dto.BaseResponse;
 import org.aibles.spaced_repetition.shared.dto.PageResponse;
 import org.aibles.spaced_repetition.shared.entity.BaseEntity;
@@ -15,10 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
 
-@RequiredArgsConstructor
 public abstract class BaseController<T extends BaseEntity> {
     
     protected final BaseService<T> service;
+    
+    protected BaseController(BaseService<T> service) {
+        this.service = service;
+    }
     
     protected abstract String getEntityName();
     
