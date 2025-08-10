@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "org.aibles.spaced_repetition.flashcard",
     "org.aibles.spaced_repetition.review",
     "org.aibles.spaced_repetition.reminder",
+    "org.aibles.spaced_repetition.core",
     "org.aibles.spaced_repetition.config"
 })
 @EntityScan(basePackages = {

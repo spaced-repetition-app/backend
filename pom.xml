@@ -17,6 +17,7 @@
 	
 	<modules>
 		<module>shared-commons</module>
+		<module>core-service</module>
 		<module>auth-service</module>
 		<module>user-service</module>
 		<module>flashcard-service</module>

@@ -23,6 +23,26 @@ spring:
           time_zone: ${DB_TIMEZONE:UTC}
         validator:
           apply_to_ddl: false
+  
+  # Mail Configuration
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    protocol: smtp
+    default-encoding: UTF-8
+    test-connection: false
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:true}
+          connectiontimeout: ${MAIL_SMTP_CONNECTION_TIMEOUT:5000}
+          timeout: ${MAIL_SMTP_TIMEOUT:5000}
+          writetimeout: ${MAIL_SMTP_WRITE_TIMEOUT:5000}
+          debug: ${MAIL_SMTP_DEBUG:false}
 
 # Server Configuration
 server:
@@ -43,29 +63,14 @@ app:
 # Logging Configuration
 logging:
   level:
-    org.aibles.spaced_repetition: ${LOG_LEVEL_APP:INFO}
-    org.springframework.security: ${LOG_LEVEL_SECURITY:WARN}
-    org.hibernate.SQL: ${LOG_LEVEL_SQL:WARN}
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    org.aibles.spaced_repetition: INFO
 
-# External Services Configuration
-external:
-  email:
-    smtp:
-      host: ${EMAIL_SMTP_HOST:smtp.gmail.com}
-      port: ${EMAIL_SMTP_PORT:587}
-      username: ${EMAIL_SMTP_USERNAME:}
-      password: ${EMAIL_SMTP_PASSWORD:}
-      auth: ${EMAIL_SMTP_AUTH:true}
-      starttls:
-        enable: ${EMAIL_SMTP_STARTTLS:true}
-  
-  file:
-    upload:
-      path: ${FILE_UPLOAD_PATH:./uploads}
-      max-size: ${FILE_MAX_SIZE:10MB}
-      allowed-types: ${FILE_ALLOWED_TYPES:jpg,jpeg,png,gif,pdf}
+# File Upload Configuration
+file:
+  upload:
+    path: ${FILE_UPLOAD_PATH:./uploads}
+    max-size: ${FILE_MAX_SIZE:10MB}
+    allowed-types: ${FILE_ALLOWED_TYPES:jpg,jpeg,png,gif,pdf}
 
 # API Configuration
 api:

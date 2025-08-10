@@ -23,6 +23,16 @@
         </dependency>
         <dependency>
             <groupId>org.aibles.spaced_repetition</groupId>
+            <artifactId>core-exception</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aibles.spaced_repetition</groupId>
+            <artifactId>core-email</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aibles.spaced_repetition</groupId>
             <artifactId>auth-service</artifactId>
             <version>${project.version}</version>
         </dependency>

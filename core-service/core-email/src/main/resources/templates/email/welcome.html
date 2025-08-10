@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chào mừng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4f46e5;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9fafb;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4f46e5;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Chào mừng đến với Spaced Repetition!</h1>
+    </div>
+    
+    <div class="content">
+        <h2>Xin chào <span th:text="${userName}">Người dùng</span>!</h2>
+        
+        <p>Chúc mừng bạn đã tham gia cộng đồng học tập của chúng tôi. Chúng tôi rất vui mừng được đồng hành cùng bạn trong hành trình học tập hiệu quả.</p>
+        
+        <p>Với phương pháp Spaced Repetition, bạn sẽ:</p>
+        <ul>
+            <li>Ghi nhớ kiến thức lâu hơn</li>
+            <li>Học tập hiệu quả hơn</li>
+            <li>Tiết kiệm thời gian ôn tập</li>
+        </ul>
+        
+        <div style="text-align: center;">
+            <a href="#" th:href="${loginUrl}" class="button">Bắt đầu học ngay</a>
+        </div>
+        
+        <p>Nếu bạn có bất kỳ câu hỏi nào, đừng ngại liên hệ với chúng tôi qua email support@spacedrepetition.com</p>
+        
+        <p>Chúc bạn học tập vui vẻ!</p>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2024 Spaced Repetition Learning Platform. All rights reserved.</p>
+    </div>
+</body>
+</html>
