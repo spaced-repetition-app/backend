@@ -29,11 +29,8 @@ Phát triển thêm các tính năng còn thiếu cho **flashcard-service** hi�
 
 ## 1. Phân tích Actors và User Stories
 
-### 1.1 Actors (Các tác nhân)
-- **Student (Học sinh)**: Người học chính sử dụng flashcard
-- **Teacher (Giáo viên)**: Người tạo và quản lý nội dung học tập
-- **Admin (Quản trị viên)**: Quản lý hệ thống và người dùng
-- **Guest (Khách)**: Người dùng chưa đăng ký, chỉ xem nội dung công khai
+### 1.1 Actors (Các tác nhân) - MVP Version (No Auth)
+- **User (Người dùng)**: Bất kỳ ai có thể tạo, quản lý và học flashcard (không cần đăng ký/đăng nhập)
 
 ### 1.2 User Stories - Phase 1 (Realistic & Focused)
 
@@ -46,17 +43,17 @@ Phát triển thêm các tính năng còn thiếu cho **flashcard-service** hi�
 **Acceptance Criteria:**
 - [ ] Implement tất cả methods trong FlashcardService
 - [ ] Validation: front và back không được trống
-- [ ] Chỉ owner deck mới được tạo/sửa/xóa flashcard
+- [ ] Bất kỳ ai cũng có thể tạo/sửa/xóa flashcard
 - [ ] Sử dụng existing FlashcardStatus enum
 
 **US1.2: Complete Deck Management**
-- **Là** User (authenticated)  
-- **Tôi muốn** quản lý các deck của mình
+- **Là** User
+- **Tôi muốn** quản lý các deck
 - **Để** tổ chức flashcard theo chủ đề
 
 **Acceptance Criteria:**
 - [ ] Implement DeckService với CRUD operations
-- [ ] User chỉ xem được deck của mình
+- [ ] User có thể xem tất cả deck trong hệ thống
 - [ ] Validation: title không trống, maxlength 255
 - [ ] Soft delete cho deck (giữ lại data)
 
@@ -72,7 +69,7 @@ Phát triển thêm các tính năng còn thiếu cho **flashcard-service** hi�
 - [ ] Cập nhật FlashcardStatus khi học
 - [ ] Không cần UI phức tạp (API first)
 
-#### Epic 3: Integration & Security  
+#### Epic 3: Integration & Basic Features  
 **US3.1: Service Integration**
 - **Là** System
 - **Tôi muốn** tích hợp flashcard với review service
@@ -80,44 +77,44 @@ Phát triển thêm các tính năng còn thiếu cho **flashcard-service** hi�
 
 **Acceptance Criteria:**
 - [ ] Kết nối với ReviewLog khi user study
-- [ ] Sử dụng existing User authentication
 - [ ] Error handling với Core Exception
 - [ ] API documentation cơ bản
+- [ ] Lưu progress theo sessionId thay vì userId
 
 ---
 
 ## 2. Luồng nghiệp vụ chính
 
-### 2.1 Luồng tạo và học flashcard
+### 2.1 Luồng tạo và học flashcard (MVP - No Auth)
 ```
-1. User đăng nhập
+1. User truy cập ứng dụng (không cần đăng nhập)
 2. Tạo deck mới hoặc chọn deck có sẵn
 3. Thêm flashcard vào deck
 4. Bắt đầu session học tập
-5. Hệ thống hiển thị thẻ theo thuật toán
-6. User đánh giá độ khó
-7. Cập nhật lịch ôn tập
-8. Lưu tiến độ học tập
+5. Hệ thống hiển thị flashcard tuần tự
+6. User đánh giá độ khó (EASY/MEDIUM/HARD/AGAIN)
+7. Cập nhật trạng thái flashcard
+8. Lưu kết quả học tập (theo sessionId tạm thời)
 ```
 
-### 2.2 Luồng ngoại lệ
+### 2.2 Luồng ngoại lệ (MVP - No Auth)
 - **Mất kết nối**: Lưu dữ liệu tạm thời trong localStorage
 - **Deck trống**: Hiển thị hướng dẫn tạo thẻ đầu tiên
-- **Permission denied**: Redirect về trang public hoặc login
+- **Session expired**: Tạo session mới tự động
 
 ---
 
 ## 3. Ràng buộc nghiệp vụ
 
-### 3.1 Ràng buộc dữ liệu
+### 3.1 Ràng buộc dữ liệu (MVP - No Auth)
 - Flashcard: câu hỏi và đáp án không được trống
 - Deck: tên deck tối đa 100 ký tự
-- User: chỉ được tạo tối đa 50 deck (miễn phí)
+- Không giới hạn số deck (vì không có user management)
 
-### 3.2 Ràng buộc bảo mật
-- Chỉ owner được chỉnh sửa/xóa deck
-- Public deck: mọi người xem được, chỉ owner chỉnh sửa
-- Private deck: chỉ owner và được chia sẻ
+### 3.2 Ràng buộc bảo mật (MVP - No Auth)
+- Tất cả deck đều public và có thể truy cập bởi bất kỳ ai
+- Không có ownership concept
+- Không có permission checking
 
 ---
 
@@ -129,14 +126,15 @@ Phát triển thêm các tính năng còn thiếu cho **flashcard-service** hi�
 **Mô tả:** Implement logic cho service đã có skeleton
 **Existing:** FlashcardService, FlashcardRepository, FlashcardController
 
-**API Endpoints cần implement:**
+**API Endpoints cần implement (RESTful):**
 ```java
-// FlashcardController - cần implement methods
-POST /api/flashcards                    // Create new flashcard
-GET /api/flashcards/{id}               // Get flashcard by ID  
-PUT /api/flashcards/{id}               // Update flashcard
-DELETE /api/flashcards/{id}            // Delete flashcard
-GET /api/decks/{deckId}/flashcards     // Get all flashcards in deck
+// FlashcardController - RESTful design
+POST   /api/v1/decks/{deckId}/flashcards     // Create flashcard in deck
+GET    /api/v1/flashcards/{id}              // Get flashcard by ID  
+PUT    /api/v1/flashcards/{id}              // Update flashcard
+DELETE /api/v1/flashcards/{id}              // Delete flashcard
+GET    /api/v1/decks/{deckId}/flashcards     // Get all flashcards in deck
+GET    /api/v1/flashcards                   // Get all flashcards (with pagination)
 ```
 
 **Service Methods cần viết:**
@@ -153,24 +151,35 @@ public List<FlashcardDto> getFlashcardsByDeck(String deckId);
 **Mô tả:** Implement logic cho DeckService
 **Existing:** DeckService, DeckRepository, DeckController
 
-**API Endpoints:**
+**API Endpoints (RESTful):**
 ```java
-// DeckController - implement methods
-POST /api/decks                        // Create deck
-GET /api/decks                         // Get user's decks (paginated)
-GET /api/decks/{id}                    // Get deck details
-PUT /api/decks/{id}                    // Update deck
-DELETE /api/decks/{id}                 // Soft delete deck
+// DeckController - RESTful design
+POST   /api/v1/decks                       // Create deck
+GET    /api/v1/decks                       // Get all decks (paginated)
+GET    /api/v1/decks/{id}                  // Get deck by ID with details
+PUT    /api/v1/decks/{id}                  // Update entire deck
+PATCH  /api/v1/decks/{id}                  // Partial update deck
+DELETE /api/v1/decks/{id}                  // Soft delete deck
+GET    /api/v1/decks/{id}/flashcards       // Get flashcards in deck
+GET    /api/v1/decks/{id}/stats            // Get deck statistics
 ```
 
 #### F3: Study Session Integration ✅ **USE existing ReviewLog**
 **Mô tả:** Tích hợp với review-service có sẵn
 **Existing:** ReviewLog entity, ReviewLogService
 
-**New Endpoints trong FlashcardController:**
+**Study Session Endpoints (RESTful):**
 ```java
-GET /api/decks/{deckId}/study          // Get flashcards for study
-POST /api/decks/{deckId}/study-result  // Submit study result
+// Study session management
+POST   /api/v1/decks/{deckId}/study-sessions    // Start new study session
+GET    /api/v1/study-sessions/{sessionId}      // Get current study session
+PUT    /api/v1/study-sessions/{sessionId}      // Update session progress
+DELETE /api/v1/study-sessions/{sessionId}      // End study session
+
+// Study actions within session
+GET    /api/v1/study-sessions/{sessionId}/next-card     // Get next flashcard
+POST   /api/v1/study-sessions/{sessionId}/responses     // Submit card response
+GET    /api/v1/study-sessions/{sessionId}/progress      // Get session progress
 ```
 
 **Integration với ReviewService:**
@@ -178,13 +187,13 @@ POST /api/decks/{deckId}/study-result  // Submit study result
 - Cập nhật FlashcardStatus dựa trên ReviewResult
 - Không cần tạo StudySession entity mới
 
-#### F4: Authorization & Validation ✅ **USE existing Core**
-**Mô tả:** Security và validation
-**Existing:** Core Exception, User authentication
+#### F4: Validation Only ✅ **USE existing Core**
+**Mô tả:** Basic validation (no security)
+**Existing:** Core Exception
 
 **Implementation:**
-- Sử dụng SecurityConfig có sẵn
-- Owner-based authorization cho Deck/Flashcard
+- Bỏ qua SecurityConfig
+- Không có authorization checking
 - Validation với Bean Validation
 - Error handling với CoreException
 
@@ -200,40 +209,24 @@ POST /api/decks/{deckId}/study-result  // Submit study result
 
 ---
 
-## 4.3 Existing Database Schema (KHÔNG THAY ĐỔI)
+## 4.3 Database Schema
 
-```sql
--- ✅ Đã có sẵn, không cần tạo mới
-Decks {
-  id: VARCHAR(36) PK              -- UUID from BaseEntity
-  title: VARCHAR(255) NOT NULL
-  description: TEXT
-  owner_id: VARCHAR(36) NOT NULL  -- Reference to User.id
-  created_at: TIMESTAMP           -- From BaseEntity
-  updated_at: TIMESTAMP           -- From BaseEntity
-}
+Xem chi tiết database schema đầy đủ tại: **[database-schema.md](./database-schema.md)**
 
-Flashcards {
-  id: VARCHAR(36) PK              -- UUID from BaseEntity  
-  front: TEXT NOT NULL
-  back: TEXT NOT NULL
-  deck_id: VARCHAR(36) NOT NULL   -- FK to Decks
-  status: ENUM('NEW','LEARNING','REVIEW','MASTERED')
-  created_at: TIMESTAMP           -- From BaseEntity
-  updated_at: TIMESTAMP           -- From BaseEntity
-}
+**Core tables cho MVP:**
+- `decks` - Container cho flashcards
+- `flashcards` - Thẻ học với spaced repetition data
+- `study_sessions` - Quản lý session học tập  
+- `review_logs` - Log chi tiết mỗi lần review
+- `deck_statistics` - Thống kê và analytics
+- `system_settings` - Cấu hình hệ thống
 
-ReviewLogs {                      -- ✅ Đã có trong review-service
-  id: VARCHAR(36) PK
-  user_id: VARCHAR(36) NOT NULL
-  flashcard_id: VARCHAR(36) NOT NULL
-  result: ENUM ReviewResult       
-  reaction_time_ms: INTEGER
-  silent_mode: BOOLEAN
-  next_review_date: DATETIME
-  created_at: TIMESTAMP
-}
-```
+**Key features:**
+- UUID primary keys cho tất cả entities
+- Soft delete support
+- Comprehensive indexing strategy
+- Built-in analytics tables
+- Spaced repetition algorithm support
 
 ---
 
@@ -243,7 +236,7 @@ ReviewLogs {                      -- ✅ Đã có trong review-service
 **T-shirt size: M** (Nhẹ hơn vì đã có infrastructure)
 - [ ] **F1**: Complete FlashcardService methods - **S** (chỉ implement logic)
 - [ ] **F2**: Complete DeckService methods - **S** (chỉ implement logic)  
-- [ ] **F4**: Add validation & authorization - **S** (sử dụng existing core)
+- [ ] **F4**: Add validation only - **S** (bỏ authorization)
 - [ ] Basic integration testing - **S**
 
 ### 🎯 Sprint 2 - Study Features (1 week)
@@ -271,10 +264,10 @@ ReviewLogs {                      -- ✅ Đã có trong review-service
    - UpdateFlashcardRequest  
    - FlashcardDto
 
-2. **Implement FlashcardService methods** (2 days)
+2. **Implement FlashcardService methods** (1.5 days)
    - Sử dụng existing FlashcardRepository
    - Add validation logic
-   - Owner authorization
+   - Bỏ qua authorization
 
 3. **Complete FlashcardController** (1 day)
    - Implement REST endpoints
@@ -286,17 +279,18 @@ ReviewLogs {                      -- ✅ Đã có trong review-service
    - UpdateDeckRequest
    - DeckDto với flashcard count
 
-5. **Implement DeckService** (1.5 days)
+5. **Implement DeckService** (1 day)
    - CRUD operations
-   - Owner-based filtering
+   - Bỏ filtering
    - Soft delete logic
 
 ### 📝 Task Breakdown - Sprint 2
 
 6. **Study Integration** (2 days)
-   - Study endpoints trong FlashcardController
+   - Study session RESTful endpoints
    - Tích hợp với existing ReviewLogService
    - FlashcardStatus transition logic
+   - Session management
 
 7. **Testing & Documentation** (3 days)
    - Unit tests cho services
@@ -316,7 +310,7 @@ participant Backend
 participant Database
 
 User -> Frontend: Start study session
-Frontend -> Backend: POST /api/study-sessions
+Frontend -> Backend: POST /api/v1/decks/{deckId}/study-sessions
 Backend -> Database: Create session record
 Backend -> Frontend: Session ID & first card
 Frontend -> User: Display card (front side)
@@ -325,9 +319,10 @@ User -> Frontend: Click to reveal answer
 Frontend -> User: Show back side
 
 User -> Frontend: Rate difficulty
-Frontend -> Backend: POST /api/study-sessions/:id/card-response
-Backend -> Database: Save response & calculate next review
-Backend -> Database: Get next card based on algorithm
+Frontend -> Backend: POST /api/v1/study-sessions/{sessionId}/responses
+Backend -> Database: Save response & update flashcard status
+Backend -> Backend: Get next card in session
+Frontend -> Backend: GET /api/v1/study-sessions/{sessionId}/next-card
 Backend -> Frontend: Next card or session complete
 @enduml
 ```
@@ -341,12 +336,12 @@ participant Backend
 participant Database
 
 User -> Frontend: Create new deck
-Frontend -> Backend: POST /api/decks
+Frontend -> Backend: POST /api/v1/decks
 Backend -> Database: Insert deck record
 Backend -> Frontend: Deck created successfully
 
 User -> Frontend: Add flashcard to deck
-Frontend -> Backend: POST /api/flashcards
+Frontend -> Backend: POST /api/v1/decks/{deckId}/flashcards
 Backend -> Database: Insert flashcard with deck_id
 Backend -> Frontend: Card added successfully
 @enduml
