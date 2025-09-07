@@ -1,0 +1,104 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  workflow_dispatch:
+
+concurrency:
+  group: spaced-repetition-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: spaced-repetition-app/backend   # ghcr.io/spaced-repetition-app/backend
+  DOCKERFILE: ./Dockerfile
+  IMAGE_TAG_SHA: ${{ github.sha }}
+
+jobs:
+  ci-build-and-push:
+    name: Build & Push Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Pre-Build (optional)
+        run: mvn -B -q -DskipTests package -pl main -am
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Build & Tag
+        run: |
+          # luôn build tag theo SHA
+          docker build -f $DOCKERFILE -t $REGISTRY/$IMAGE_NAME:${IMAGE_TAG_SHA} .
+          # nhánh main -> latest
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            docker tag $REGISTRY/$IMAGE_NAME:${IMAGE_TAG_SHA} $REGISTRY/$IMAGE_NAME:latest
+          fi
+          # nhánh develop -> develop
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            docker tag $REGISTRY/$IMAGE_NAME:${IMAGE_TAG_SHA} $REGISTRY/$IMAGE_NAME:develop
+          fi
+
+      - name: Push
+        run: |
+          docker push $REGISTRY/$IMAGE_NAME:${IMAGE_TAG_SHA}
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            docker push $REGISTRY/$IMAGE_NAME:latest
+          fi
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            docker push $REGISTRY/$IMAGE_NAME:develop
+          fi
+
+  cd-deploy:
+    name: Deploy on Self-hosted (develop only)
+    needs: [ ci-build-and-push ]
+    # chỉ chạy khi nhánh develop
+    if: github.ref_name == 'develop'
+    runs-on: self-hosted
+
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: spaced-repetition-app/backend
+      SERVER_DIR: /home/daint/spaced-repetition/docker
+      COMPOSE_FILES: "-f mysql-dev.yml -f app.yml"
+      DEPLOY_TAG: develop
+
+    steps:
+      - name: Ensure external network exists
+        run: docker network create srs-network || true
+
+      - name: Docker login on server
+        run: docker login $REGISTRY -u ${{ secrets.GHCR_USERNAME }} -p ${{ secrets.GHCR_PAT }}
+
+      - name: Pull images
+        working-directory: ${{ env.SERVER_DIR }}
+        run: |
+          docker pull $REGISTRY/$IMAGE_NAME:${DEPLOY_TAG} || true
+          docker compose ${COMPOSE_FILES} pull
+
+      - name: Up (recreate only changed)
+        working-directory: ${{ env.SERVER_DIR }}
+        run: docker compose ${COMPOSE_FILES} up -d
+
+      - name: Show status
+        working-directory: ${{ env.SERVER_DIR }}
+        run: |
+          docker compose ${COMPOSE_FILES} ps
+          docker ps
