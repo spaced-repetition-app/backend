@@ -1,6 +1,6 @@
--- =========================
+-- ==========================
 -- Mock data for spaced_repetition
--- =========================
+-- ==========================
 
 -- ---------- Accounts (5) ----------
 INSERT INTO account (id, email, password_hash, is_active, created_by, updated_by)
