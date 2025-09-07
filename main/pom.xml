@@ -107,6 +107,20 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- Override skip=true ở parent -->
+                <configuration>
+                    <skip>false</skip>
+                    <!-- Đổi tên class nếu app của bạn khác -->
+                    <mainClass>org.aibles.spaced_repetition.SpacedRepetitionApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
