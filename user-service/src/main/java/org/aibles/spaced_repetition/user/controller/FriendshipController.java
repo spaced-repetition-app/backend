@@ -13,9 +13,4 @@ public class FriendshipController extends BaseController<Friendship> {
     public FriendshipController(FriendshipService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Friendship";
-    }
 }

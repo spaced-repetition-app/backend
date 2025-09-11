@@ -13,9 +13,4 @@ public class ProgressReportController extends BaseController<ProgressReport> {
     public ProgressReportController(ProgressReportService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "ProgressReport";
-    }
 }

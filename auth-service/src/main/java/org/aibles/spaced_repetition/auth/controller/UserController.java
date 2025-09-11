@@ -13,9 +13,4 @@ public class UserController extends BaseController<User> {
     public UserController(UserService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "User";
-    }
 }

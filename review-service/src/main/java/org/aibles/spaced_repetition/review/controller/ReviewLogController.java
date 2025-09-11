@@ -13,9 +13,4 @@ public class ReviewLogController extends BaseController<ReviewLog> {
     public ReviewLogController(ReviewLogService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "ReviewLog";
-    }
 }

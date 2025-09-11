@@ -11,9 +11,4 @@ public class DeckService extends BaseServiceImpl<Deck> {
     public DeckService(DeckRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Deck";
-    }
 }

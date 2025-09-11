@@ -13,9 +13,4 @@ public class FlashcardController extends BaseController<Flashcard> {
     public FlashcardController(FlashcardService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Flashcard";
-    }
 }

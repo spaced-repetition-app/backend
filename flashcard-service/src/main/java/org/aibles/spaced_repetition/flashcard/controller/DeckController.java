@@ -13,9 +13,4 @@ public class DeckController extends BaseController<Deck> {
     public DeckController(DeckService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Deck";
-    }
 }
