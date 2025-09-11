@@ -11,9 +11,4 @@ public class ReviewLogService extends BaseServiceImpl<ReviewLog> {
     public ReviewLogService(ReviewLogRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "ReviewLog";
-    }
 }

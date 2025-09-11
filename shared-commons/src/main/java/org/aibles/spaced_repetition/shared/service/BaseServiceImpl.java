@@ -17,7 +17,6 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
     
     protected final BaseRepository<T> repository;
     
-    protected abstract String getEntityName();
     
     @Override
     public T create(T entity) {
@@ -34,7 +33,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
     @Override
     public T update(String id, T entity) {
         T existingEntity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(getEntityName(), id));
+                .orElseThrow(() -> new ResourceNotFoundException(id));
         
         entity.setId(id);
         entity.setCreatedAt(existingEntity.getCreatedAt());
@@ -62,7 +61,7 @@ public abstract class BaseServiceImpl<T extends BaseEntity> implements BaseServi
     @Override
     public void deleteById(String id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException(getEntityName(), id);
+            throw new ResourceNotFoundException(id);
         }
         repository.deleteById(id);
     }

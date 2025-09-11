@@ -13,9 +13,4 @@ public class AccountController extends BaseController<Account> {
     public AccountController(AccountService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Account";
-    }
 }

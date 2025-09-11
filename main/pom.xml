@@ -14,21 +14,17 @@
     <name>Main Application</name>
     <description>Main Application - Modular Monolith</description>
 
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <!-- Service Modules -->
         <dependency>
             <groupId>org.aibles.spaced_repetition</groupId>
             <artifactId>shared-commons</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aibles.spaced_repetition</groupId>
-            <artifactId>core-exception</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aibles.spaced_repetition</groupId>
-            <artifactId>core-email</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -101,14 +97,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

@@ -11,9 +11,4 @@ public class FriendshipService extends BaseServiceImpl<Friendship> {
     public FriendshipService(FriendshipRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Friendship";
-    }
 }

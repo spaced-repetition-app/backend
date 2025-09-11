@@ -13,9 +13,4 @@ public class ReminderController extends BaseController<Reminder> {
     public ReminderController(ReminderService service) {
         super(service);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Reminder";
-    }
 }

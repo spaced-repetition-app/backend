@@ -11,9 +11,4 @@ public class ReminderService extends BaseServiceImpl<Reminder> {
     public ReminderService(ReminderRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Reminder";
-    }
 }

@@ -11,9 +11,4 @@ public class ProgressReportService extends BaseServiceImpl<ProgressReport> {
     public ProgressReportService(ProgressReportRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "ProgressReport";
-    }
 }

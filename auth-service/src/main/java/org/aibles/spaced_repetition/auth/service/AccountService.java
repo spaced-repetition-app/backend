@@ -11,9 +11,4 @@ public class AccountService extends BaseServiceImpl<Account> {
     public AccountService(AccountRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Account";
-    }
 }

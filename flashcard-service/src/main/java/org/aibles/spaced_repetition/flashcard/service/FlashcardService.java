@@ -11,9 +11,4 @@ public class FlashcardService extends BaseServiceImpl<Flashcard> {
     public FlashcardService(FlashcardRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "Flashcard";
-    }
 }
