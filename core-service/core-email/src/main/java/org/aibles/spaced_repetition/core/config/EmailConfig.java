@@ -50,7 +50,8 @@ public class EmailConfig {
         return mailSender;
     }
 
-    @Bean(name = "emailTemplateEngine")
+    @Bean
+    @ConditionalOnMissingBean(TemplateEngine.class)
     public TemplateEngine emailTemplateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(emailTemplateResolver());
