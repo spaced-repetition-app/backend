@@ -72,6 +72,18 @@ file:
     max-size: ${FILE_MAX_SIZE:10MB}
     allowed-types: ${FILE_ALLOWED_TYPES:jpg,jpeg,png,gif,pdf}
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  use-management-port: false
+
 # API Configuration
 api:
   rate-limit:
