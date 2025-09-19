@@ -4,5 +4,7 @@ public enum FlashcardStatus {
     NEW,
     LEARNING,
     REVIEW,
-    MASTERED
+    MASTERED,
+    SUSPENDED,
+    DELETED
 }

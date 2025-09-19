@@ -9,12 +9,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages = {
     "org.aibles.spaced_repetition.auth",
-    "org.aibles.spaced_repetition.user", 
+    "org.aibles.spaced_repetition.user",
     "org.aibles.spaced_repetition.flashcard",
     "org.aibles.spaced_repetition.review",
     "org.aibles.spaced_repetition.reminder",
     "org.aibles.spaced_repetition.core",
-    "org.aibles.spaced_repetition.config"
+    "org.aibles.spaced_repetition.config",
+    "org.aibles.spaced_repetition.shared"
 })
 @EntityScan(basePackages = {
     "org.aibles.spaced_repetition.auth.entity",

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aibles.spaced_repetition.core.exception.CoreException;
 import org.aibles.spaced_repetition.core.i18n.MessageService;
+import org.aibles.spaced_repetition.shared.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -22,12 +23,27 @@ public class CoreGlobalExceptionHandler {
 
     private final MessageService messageService;
 
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException ex) {
+        log.error("Business exception occurred: {}", ex.getMessage(), ex);
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(ex.getHttpStatus().value())
+                .error(ex.getHttpStatus().getReasonPhrase())
+                .message(ex.getMessage())
+                .code(ex.getCode())
+                .build();
+
+        return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
+    }
+
     @ExceptionHandler(CoreException.class)
     public ResponseEntity<ErrorResponse> handleCoreException(CoreException ex) {
         log.error("Core exception occurred: {}", ex.getMessage(), ex);
-        
+
         String localizedMessage = messageService.getMessage(ex.getErrorCode(), ex.getArgs());
-        
+
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(ex.getHttpStatus().value())
@@ -35,7 +51,7 @@ public class CoreGlobalExceptionHandler {
                 .message(localizedMessage)
                 .code(ex.getErrorCode())
                 .build();
-        
+
         return ResponseEntity.status(ex.getHttpStatus()).body(errorResponse);
     }
 
