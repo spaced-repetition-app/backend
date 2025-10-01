@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
-    private final TemplateEngine templateEngine;
+    private final TemplateEngine emailTemplateEngine;
 
     @Override
     public void sendEmail(EmailDto emailDto) {
@@ -165,7 +165,7 @@ public class EmailServiceImpl implements EmailService {
             if (variables != null) {
                 context.setVariables(variables);
             }
-            return templateEngine.process("email/" + templateName, context);
+            return emailTemplateEngine.process("email/" + templateName, context);
         } catch (Exception e) {
             log.error("Failed to process email template: {}", templateName, e);
             throw new CoreInternalServerException("email.template.not.found");

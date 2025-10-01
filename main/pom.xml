@@ -14,21 +14,17 @@
     <name>Main Application</name>
     <description>Main Application - Modular Monolith</description>
 
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <!-- Service Modules -->
         <dependency>
             <groupId>org.aibles.spaced_repetition</groupId>
             <artifactId>shared-commons</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aibles.spaced_repetition</groupId>
-            <artifactId>core-exception</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aibles.spaced_repetition</groupId>
-            <artifactId>core-email</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -86,12 +82,39 @@
             <scope>runtime</scope>
         </dependency>
         
+        <!-- OpenAPI (Swagger) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
         <!-- Dev Tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        
+        <!-- Elasticsearch Logback Appender -->
+        <dependency>
+            <groupId>com.internetitem</groupId>
+            <artifactId>logback-elasticsearch-appender</artifactId>
+            <version>1.6</version>
+        </dependency>
+        
+        <!-- Logstash Logback Encoder -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
+        </dependency>
+        
+        <!-- Sentry -->
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-spring-boot-starter-jakarta</artifactId>
+            <version>7.18.0</version>
         </dependency>
         
         <!-- Test -->
@@ -101,28 +124,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <!-- Override skip=true ở parent -->
-                <configuration>
-                    <skip>false</skip>
-                    <!-- Đổi tên class nếu app của bạn khác -->
-                    <mainClass>org.aibles.spaced_repetition.SpacedRepetitionApplication</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    
 
 </project>

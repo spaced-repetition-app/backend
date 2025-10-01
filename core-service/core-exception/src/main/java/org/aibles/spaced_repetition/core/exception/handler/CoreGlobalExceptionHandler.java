@@ -1,5 +1,6 @@
 package org.aibles.spaced_repetition.core.exception.handler;
 
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aibles.spaced_repetition.core.exception.CoreException;
@@ -25,6 +26,8 @@ public class CoreGlobalExceptionHandler {
     @ExceptionHandler(CoreException.class)
     public ResponseEntity<ErrorResponse> handleCoreException(CoreException ex) {
         log.error("Core exception occurred: {}", ex.getMessage(), ex);
+        
+        Sentry.captureException(ex);
         
         String localizedMessage = messageService.getMessage(ex.getErrorCode(), ex.getArgs());
         
@@ -65,6 +68,8 @@ public class CoreGlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error("Unexpected exception occurred: {}", ex.getMessage(), ex);
+        
+        Sentry.captureException(ex);
         
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())

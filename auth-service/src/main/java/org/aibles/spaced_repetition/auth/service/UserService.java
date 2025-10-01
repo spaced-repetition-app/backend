@@ -11,9 +11,4 @@ public class UserService extends BaseServiceImpl<User> {
     public UserService(UserRepository repository) {
         super(repository);
     }
-    
-    @Override
-    protected String getEntityName() {
-        return "User";
-    }
 }

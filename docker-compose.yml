@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: spaced-repetition-elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=spaced-repetition-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - spaced-repetition-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: spaced-repetition-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=kibana
+      - SERVER_HOST=0.0.0.0
+      - xpack.fleet.enabled=false
+      - xpack.encryptedSavedObjects.enabled=false
+      - xpack.security.enabled=false
+      - xpack.fleet.registryUrl=""
+      - LOGGING_ROOT_LEVEL=warn
+    ports:
+      - "5601:5601"
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+    networks:
+      - spaced-repetition-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 60s
+      timeout: 30s
+      retries: 10
+    restart: unless-stopped
+
+  # Spring Boot Application
+  app:
+    build: .
+    container_name: spaced-repetition-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_URL=jdbc:mysql://aibles-java.fun:3306/spaced_repetition?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      - DB_USERNAME=admin_dev
+      - DB_PASSWORD=mkUaSc1ZinlKnH4
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+    ports:
+      - "8080:8080"
+    networks:
+      - spaced-repetition-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  elasticsearch_data:
+  kibana_data:
+
+networks:
+  spaced-repetition-network:
+    driver: bridge

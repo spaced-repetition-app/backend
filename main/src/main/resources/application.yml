@@ -5,11 +5,11 @@ spring:
   
   # Database Configuration
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/spaced_repetition?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:}
+    url: ${DB_URL:jdbc:mysql://aibles-java.fun:3309/spaced_repetition?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    username: ${DB_USERNAME:admin_dev}
+    password: ${DB_PASSWORD:mkUaSc1ZinlKnH4}
     driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
-  
+
   # JPA Configuration
   jpa:
     hibernate:
@@ -64,6 +64,18 @@ app:
 logging:
   level:
     org.aibles.spaced_repetition: INFO
+    org.elasticsearch.client: INFO
+    com.internetitem.logback.elasticsearch: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Elasticsearch Configuration
+elasticsearch:
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
+  cluster-name: ${ELASTICSEARCH_CLUSTER_NAME:spaced-repetition-cluster}
+  index-prefix: ${ELASTICSEARCH_INDEX_PREFIX:spaced_repetition_logs}
 
 # File Upload Configuration
 file:
@@ -71,6 +83,27 @@ file:
     path: ${FILE_UPLOAD_PATH:./uploads}
     max-size: ${FILE_MAX_SIZE:10MB}
     allowed-types: ${FILE_ALLOWED_TYPES:jpg,jpeg,png,gif,pdf}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  show-actuator: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  use-management-port: false
+
+# Sentry Configuration (Enabled - Cloud)
+sentry:
+  dsn: ${SENTRY_DSN:https://bfc7bbe5b5c0497b885f6b9be53d3b9e@o4507869043441664.ingest.de.sentry.io/4507869048422480}
+  environment: ${SENTRY_ENVIRONMENT:development}
+  traces-sample-rate: ${SENTRY_TRACES_SAMPLE_RATE:1.0}
+  debug: ${SENTRY_DEBUG:true}
+  attach-stacktrace: true
+  send-default-pii: false
 
 # API Configuration
 api:

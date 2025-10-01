@@ -1,5 +1,6 @@
 package org.aibles.spaced_repetition.shared.handler;
 
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.aibles.spaced_repetition.shared.dto.ErrorResponse;
 import org.aibles.spaced_repetition.shared.exception.BaseException;
@@ -23,6 +24,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException ex, WebRequest request) {
         log.error("Business exception occurred: {}", ex.getMessage(), ex);
+        
+        Sentry.captureException(ex);
         
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(ex.getCode())
@@ -110,6 +113,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
         log.error("Illegal argument exception occurred: {}", ex.getMessage(), ex);
         
+        Sentry.captureException(ex);
+        
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code("ILLEGAL_ARGUMENT")
                 .message(ex.getMessage())
@@ -123,6 +128,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, WebRequest request) {
         log.error("Unexpected exception occurred: {}", ex.getMessage(), ex);
+        
+        Sentry.captureException(ex);
         
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code("INTERNAL_SERVER_ERROR")

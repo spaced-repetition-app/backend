@@ -22,19 +22,18 @@ public abstract class BaseController<T extends BaseEntity> {
         this.service = service;
     }
     
-    protected abstract String getEntityName();
     
     @PostMapping
     public ResponseEntity<BaseResponse<T>> create(@Valid @RequestBody T entity) {
         T created = service.create(entity);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(BaseResponse.success("Created " + getEntityName() + " successfully", created));
+                .body(BaseResponse.success("Created successfully", created));
     }
     
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<T>> findById(@PathVariable String id) {
         T entity = service.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(getEntityName(), id));
+                .orElseThrow(() -> new ResourceNotFoundException(id));
         return ResponseEntity.ok(BaseResponse.success(entity));
     }
     
@@ -55,13 +54,13 @@ public abstract class BaseController<T extends BaseEntity> {
     public ResponseEntity<BaseResponse<T>> update(@PathVariable String id, 
                                                 @Valid @RequestBody T entity) {
         T updated = service.update(id, entity);
-        return ResponseEntity.ok(BaseResponse.success("Updated " + getEntityName() + " successfully", updated));
+        return ResponseEntity.ok(BaseResponse.success("Updated successfully", updated));
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Void>> deleteById(@PathVariable String id) {
         service.deleteById(id);
-        return ResponseEntity.ok(BaseResponse.success("Deleted " + getEntityName() + " successfully", null));
+        return ResponseEntity.ok(BaseResponse.success("Deleted successfully", null));
     }
     
     @GetMapping("/count")
